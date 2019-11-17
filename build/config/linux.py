@@ -4,7 +4,7 @@ from waflib.TaskGen import feature
 
 host_plat = [ 'linux' ]
 
-archs = [ 'x86', 'x86_64' ]
+archs = [ 'x86', 'x86_64', 'aarch64' ]
 
 tools = [
 	'gcc',
@@ -29,8 +29,9 @@ def prepare(conf):
 	env['CC']   = 'gcc'
 	env['CXX']  = 'g++'
 
-	env['ARCH']    = ['-m%s' % ('64' in env.SUBARCH and '64' or '32')]
-	env['ARCH_ST'] = env['ARCH']
+	if os.environ['ARCH'] != 'aarch64':
+		env['ARCH']	= ['-m%s' % ('64' in env.SUBARCH and '64' or '32')]
+		env['ARCH_ST'] = env['ARCH']
 
 	pin_root = env['PIN_ROOT'] or j(root, '3rdParty', 'pin')
 	pin = j(pin_root, 'pin-2.12-54730-gcc.4.4.7-linux')
