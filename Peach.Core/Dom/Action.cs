@@ -40,6 +40,7 @@ using Peach.Core.Dom.XPath;
 using System.Xml.Serialization;
 using System.IO;
 using Peach.Core.IO;
+using Peach.Core.Publishers;
 
 namespace Peach.Core.Dom
 {
@@ -103,6 +104,8 @@ namespace Peach.Core.Dom
 		//protected string _value = null;
 		protected string _setXpath = null;
 		protected string _valueXpath = null;
+
+                private int fileLengthBytes = 0;
 
 		public string name
 		{
@@ -516,7 +519,18 @@ namespace Peach.Core.Dom
 
 					case ActionType.Output:
 						publisher.start();
-						publisher.open();
+						if (publisher is FilePublisher) {
+                                                  if (context.config.outputFilePath != null) {
+                                                    FilePublisher filePublisher = (FilePublisher) publisher;
+						    filePublisher.FileName = context.config.outputFilePath;
+                                                  }
+						  if (context.config.inputFilePath != null) {
+						    if (File.Exists(context.config.inputFilePath)) {
+						      fileLengthBytes = (int) new FileInfo(context.config.inputFilePath).Length;
+						    }
+						  }
+						}
+                                                publisher.open();
 						handleOutput(publisher);
 						parent.parent.dataActions.Add(this);
 						break;
@@ -593,6 +607,18 @@ namespace Peach.Core.Dom
 			}
 
 			publisher.output(ms.GetBuffer(), (int)ms.Position, (int)ms.Length);
+
+			if (publisher is FilePublisher) {
+				FilePublisher filePublisher = (FilePublisher) publisher;
+				dataModel.GenerateBoundaryFile(filePublisher.FileName + ".chunks");
+				if ((int)ms.Length < fileLengthBytes) {
+					Console.WriteLine("error {0}", (100 * ((float)ms.Length / fileLengthBytes)).ToString("n2"));
+				} else if ((int)ms.Length == fileLengthBytes) {
+					Console.WriteLine("ok");
+				} else {
+					//XXX. Should not be here
+				}
+			}
 		}
 
 		protected void handleCall(Publisher publisher, RunContext context)

@@ -133,6 +133,73 @@ namespace Peach.Core.Dom
 				cracking = false;
 			}
 		}
+
+		public void GenerateBoundaryFile(string filename)
+                {
+                        long pos = 0;
+                        Stack<DataElement> stack = new Stack<DataElement>();
+                        using (System.IO.StreamWriter outputFile = new System.IO.StreamWriter (filename)) {
+                                DataElement root = this;
+                                stack.Push (this);
+                                // Execute the loop until all data elements (nodes) are traversed
+                                while (stack.Count >0) {
+                                        DataElement node = stack.Pop ();
+                                        // If the current node is a DataElementContainer, get all child nodes and push
+                                        // them on top of the stack
+                                        if (node is DataElementContainer) {
+						// Output the name of the current node and its boundary
+						string strName = node.name;
+                                                DataElement ancestor = node.parent;
+                                                while (ancestor != null) {
+                                                        strName = ancestor.name + "~" + strName;
+                                                        ancestor = ancestor.parent;
+                                                }
+
+						if (node.isMutable) {
+                                                	outputFile.WriteLine ("{0},{1},{2},{3}", pos, pos + node.Value.LengthBytes - 1, strName, "Enabled");
+						} else {
+							outputFile.WriteLine ("{0},{1},{2},{3}", pos, pos + node.Value.LengthBytes - 1, strName,"Disabled");
+						}
+
+                                                //Console.WriteLine ("Processing node: {0}", node.name);
+                                                DataElementContainer container = (DataElementContainer)node;
+                                                if (container.Count > 0) {
+                                                        for (int i=container.Count-1; i>=0; i--) {
+                                                                //Console.WriteLine ("Pushing to stack: {0}", container [i].name);
+                                                                stack.Push (container [i]);
+                                                        }
+                                                }
+                                        } else {
+                                                // Output the name of the current node and its boundary
+                                                // in case the node is mutable
+                                                if (node.Value.LengthBytes > 0) {
+                                                        if (node.isMutable) {                                           
+                                                                string strName = node.name;
+                                                                DataElement ancestor = node.parent;
+                                                                while (ancestor != null) {
+                                                                        strName = ancestor.name + "~" + strName;
+                                                                        ancestor = ancestor.parent;
+                                                                }
+                                                                outputFile.WriteLine ("{0},{1},{2},{3}", pos, pos + node.Value.LengthBytes - 1, strName,"Enabled");
+                                                                pos += node.Value.LengthBytes;
+                                                        } else {
+                                                                // If the Data Element is not mutable, just update the position
+                                                                //Console.WriteLine ("DataElement: {0} is not mutable", node.name);
+								string strName = node.name;
+                                                                DataElement ancestor = node.parent;
+                                                                while (ancestor != null) {
+                                                                        strName = ancestor.name + "~" + strName;
+                                                                        ancestor = ancestor.parent;
+                                                                }
+                                                                outputFile.WriteLine ("{0},{1},{2},{3}", pos, pos + node.Value.LengthBytes - 1, strName,"Disabled");
+
+                                                                pos += node.Value.LengthBytes;
+                                                        }
+                                                }
+                                        }
+                                }
+                        }
+                }
 	}
 }
 

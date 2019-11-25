@@ -142,7 +142,9 @@ namespace Peach.Core.Dom
 
 								if (data.DataType == DataType.File)
 								{
-									fileName = data.FileName;
+									//fileName = data.FileName;
+
+									fileName = context.config.inputFilePath;
 
 									try
 									{
@@ -214,7 +216,8 @@ namespace Peach.Core.Dom
 										string fileName = null;
 
 										if (data.DataType == DataType.File)
-											fileName = data.FileName;
+											//fileName = data.FileName;
+											fileName = context.config.inputFilePath;
 										else if (data.DataType == DataType.Files)
 											fileName = data.Files[0];
 										else

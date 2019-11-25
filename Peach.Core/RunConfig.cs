@@ -112,6 +112,16 @@ namespace Peach.Core
 		/// </remarks>
 		public uint randomSeed = (uint)DateTime.Now.Ticks & 0x0000FFFF;
 
+                /// <summary>
+		/// Full path to the input file to be cracked
+		/// </summary>
+		public string inputFilePath = null;
+
+                /// <summary>
+		/// Full path to the output file (repaired file)
+		/// </summary>
+		public string outputFilePath = null;
+
 		/// <summary>
 		/// Peach version currently running (used by logger)
 		/// </summary>

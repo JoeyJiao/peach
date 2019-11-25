@@ -139,6 +139,8 @@ namespace Peach.Core.Runtime
 					{ "charlie", var => Charlie() },
 					{ "showdevices", var => ShowDevices() },
 					{ "showenv", var => ShowEnvironment() },
+					{ "inputFilePath=", v=>config.inputFilePath = v },
+                                        { "outputFilePath=", v=>config.outputFilePath = v },
 				};
 
 				List<string> extra = p.Parse(args);
