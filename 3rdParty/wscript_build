@@ -2,7 +2,6 @@
 
 subdirs = [
 	'clrzmq',
-	'pin',
 	'TreeViewAdv',
 	'Be.HexEditor.150',
 	'VMware-VIX-1.12.1-894247',
