@@ -29,7 +29,8 @@ def prepare(conf):
 	env['CC']   = 'gcc'
 	env['CXX']  = 'g++'
 
-	env['ARCH']    = ['-m%s' % ('64' in env.SUBARCH and '64' or '32')]
+        if os.environ['ARCH'] != 'aarch64':
+	    env['ARCH']    = ['-m%s' % ('64' in env.SUBARCH and '64' or '32')]
 	env['ARCH_ST'] = env['ARCH']
 
 	pin_root = env['PIN_ROOT'] or j(root, '3rdParty', 'pin')
