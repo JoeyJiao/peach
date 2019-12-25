@@ -173,10 +173,6 @@ class utest(Task.Task):
 
 def configure(conf):
 	root = conf.path.abspath()
-	nunit_path = os.environ['NUNIT_PATH'] or conf.env['NUNIT_PATH'] or os.path.join(root, '3rdParty', 'NUnit-2.6.0.12051', 'bin')
+	nunit_path = conf.env['NUNIT_PATH'] or os.path.join(root, '3rdParty', 'NUnit-2.6.0.12051', 'bin')
 	nunit_name = '64' in conf.env.SUBARCH and 'nunit-console' or 'nunit-console-x86'
-	if os.environ['ARCH'] == 'aarch64':
-		nunit_name = 'nunit-console'
-		conf.find_program([nunit_name], var='NUNIT', path_list=[nunit_path])
-	else:
-		conf.find_program([nunit_name], var='NUNIT', exts='.exe', path_list=[nunit_path])
+	conf.find_program([nunit_name], var='NUNIT', exts='.exe', path_list=[nunit_path])
